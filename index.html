@@ -186,7 +186,7 @@
 
         const camera = new Camera(videoElement, {
             onFrame: async () => {
-                await hands.send({ image: videoElement });
+                await hands.send({ image: videoElement, facingMode: 'environment' });
             },
             width: cam_w,
             height: cam_h
