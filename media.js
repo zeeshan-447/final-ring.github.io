@@ -1251,7 +1251,7 @@
       d.video = e.appendChild(document.createElement("video"));
       d.video.setAttribute("crossorigin", "anonymous");
       d.video.setAttribute("playsinline", "true");
-      d.video.setAttribute("muted", "");
+      d.video.setAttribute("muted", "true");
       d.h = e.appendChild(document.createElement("img"));
       d.h.setAttribute("crossorigin", "anonymous");
       Ja(d, f);
