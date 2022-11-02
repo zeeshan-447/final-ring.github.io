@@ -103,11 +103,11 @@
                     /* Finger Angle */
                     var num = results.multiHandLandmarks[0][13].y - results.multiHandLandmarks[0][14].y
                     var denom = results.multiHandLandmarks[0][13].x - results.multiHandLandmarks[0][14].x
-                    var angle = (Math.atan2(num, denom) * (180 / Math.PI))
+                    var angle = Math.abs(Math.atan2(num, denom) * (180 / Math.PI))
                     var angle_T = (Math.atan2(num, denom) * (180 / Math.PI)) - 90
-                    angle = (angle * Math.PI) / 180.0
+                    angle = 1.6778982495774193//(angle * Math.PI) / 180.0
                     angle_T = (angle_T * Math.PI) / 180.0
-
+ 
 
                     var Top_Rightx = center.x + ((height / 2) * Math.cos(angle)) - ((width / 2) * Math.sin(angle))
                     var Top_Righty = center.y + ((height / 2) * Math.sin(angle)) + ((width / 2) * Math.cos(angle))
@@ -149,7 +149,7 @@
 
                     canvasCtx.translate(center.x * canvasElement.width, center.y * canvasElement.height);
 
-                    console.log(Top_Leftx_new, Top_Lefty_new)
+                    //console.log(Top_Leftx_new, Top_Lefty_new)
                     canvasCtx.rotate(angle_T)
 
 
@@ -157,17 +157,17 @@
 
                     canvasCtx.restore();
 
-                    console.log('angle', angle * (180 / Math.PI))
+                    //console.log('angle', angle * (180 / Math.PI))
 
 
 
                 }
                 catch (e) { console.log(e) }
 
-                for (const landmarks of results.multiHandLandmarks) {
+                /*for (const landmarks of results.multiHandLandmarks) {
                     drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#00FF00', lineWidth: 2 });
                     drawLandmarks(canvasCtx, landmarks, { color: '#FF00FF', lineWidth: 1 });
-                }
+                }*/
 
             }
             canvasCtx.restore();
