@@ -21,6 +21,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script> -->
     <script src="hands.js"></script>
+    <script src="queue.js"> </script>
 
 
     <script type="module">
@@ -33,7 +34,7 @@
         const canvasElement = document.getElementsByClassName('output_canvas')[0];
         const canvasCtx = canvasElement.getContext('2d');
         var image;
-
+        var thirdLast, secondlast, last
 
         image = document.createElement("img")
         image.src = "./ring.png";
@@ -75,8 +76,16 @@
 
             return Math.sqrt(Math.pow((middleFing.x - pinkyFing.x), 2) + Math.pow((middleFing.y - pinkyFing.y), 2)) / 2
         }
+        function calWidth(middleFing, pinkyFing) {
 
-        function calHeight(point13, point14) {
+            return Math.sqrt(Math.pow((middleFing.x - pinkyFing.x), 2) + Math.pow((middleFing.y - pinkyFing.y), 2)) / 2
+        }
+
+        function calHeight(point13, point14, angle_T) {
+
+            return Math.sqrt(Math.pow((point13.x - point14.x), 2) + Math.pow((point13.y - point14.y), 2)) / 5
+        }
+        function calHeight_W(width) {
 
             return Math.sqrt(Math.pow((point13.x - point14.x), 2) + Math.pow((point13.y - point14.y), 2)) / 5
         }
@@ -87,12 +96,37 @@
             canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
             if (results.multiHandLandmarks) {
-
+                let queue = new Queue();
                 results.multiHandLandmarks = getDistance(results.image, results.multiHandLandmarks)
 
                 try {
+
+                    thirdLast = secondlast;
+                    secondlast = last;
+                    last = results.multiHandLandmarks[0][21];
+                    queue.enqueue(last)
+                    queue.enqueue(secondlast)
+                    queue.enqueue(thirdLast)
+
+
+                    let Cavgx = (queue.items[0].x + queue.items[1].x + queue.items[2].x) / 3
+                    let Cavgy = (queue.items[0].y + queue.items[1].y + queue.items[2].y) / 3
+                    let Cavgz = (queue.items[0].z + queue.items[1].z + queue.items[2].z) / 3
+
+                    let newCenter = { x: Cavgx, y: Cavgy, z: Cavgz }
+
+
+                    var num = results.multiHandLandmarks[0][13].y - results.multiHandLandmarks[0][14].y
+                    var denom = results.multiHandLandmarks[0][13].x - results.multiHandLandmarks[0][14].x
+                    var angle = Math.abs(Math.atan2(num, denom) * (180 / Math.PI))
+                    var angle_T = (Math.atan2(num, denom) * (180 / Math.PI)) - 90
+                    angle = 1.6778982495774193//(angle * Math.PI) / 180.0
+                    angle_T = (angle_T * Math.PI) / 180.0
+
+
+
                     /* center Point */
-                    var center = results.multiHandLandmarks[0][21]
+                    var center = newCenter
 
                     /* Finger Width */
                     var width = calWidth(results.multiHandLandmarks[0][9], results.multiHandLandmarks[0][17])
@@ -107,7 +141,7 @@
                     var angle_T = (Math.atan2(num, denom) * (180 / Math.PI)) - 90
                     angle = 1.6778982495774193//(angle * Math.PI) / 180.0
                     angle_T = (angle_T * Math.PI) / 180.0
- 
+
 
                     var Top_Rightx = center.x + ((height / 2) * Math.cos(angle)) - ((width / 2) * Math.sin(angle))
                     var Top_Righty = center.y + ((height / 2) * Math.sin(angle)) + ((width / 2) * Math.cos(angle))
@@ -125,7 +159,7 @@
                     var Bot_Rightx = center.x + ((height / 2) * Math.cos(angle)) + ((width / 2) * Math.sin(angle))
                     var Bot_Righty = center.y + ((height / 2) * Math.sin(angle)) - ((width / 2) * Math.cos(angle))
 
-                    let ring_position = results.multiHandLandmarks[0][21]
+                    let ring_position = newCenter
                     results.multiHandLandmarks[0] = []
                     results.multiHandLandmarks[0].push({ x: Top_Leftx, y: Top_Lefty, z: Top_Lefty })
                     // results.multiHandLandmarks[0].push({ x: center.x, y: center.y, z: Top_Lefty })
@@ -153,7 +187,7 @@
                     canvasCtx.rotate(angle_T)
 
 
-                    canvasCtx.drawImage(image, Top_Leftx_new * canvasElement.width, Top_Lefty_new * canvasElement.height, width * canvasElement.width, 40);
+                    canvasCtx.drawImage(image, Top_Leftx_new * canvasElement.width, Top_Lefty_new * canvasElement.height, width * canvasElement.width, width * 0.4 * canvasElement.height);
 
                     canvasCtx.restore();
 
