@@ -2,246 +2,59 @@
 <html>
 
 <head>
-
     <style>
-        img {
-            max-height: 60px;
-            transform: rotate(45deg);
+        body {
+            height: 100vh;
+        }
+
+        .logo {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 70vh;
+        }
+
+        .img-style {
+            width: 80%;
+        }
+
+        .title {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 500;
+            font-size: 60px;
+            line-height: 24px;
+
+            color: #CCAE5E;
+        }
+
+
+
+        .try-btn {
+            width: 500px;
+            height: 75px;
+            background: #691A38;
+            border-radius: 12px;
+            color: white;
+            font-size: 36px;
+        }
+
+        .btn-div {
+            display: flex;
+            justify-content: center;
         }
     </style>
-
-
-
-    <meta charset="utf-8">
-    <script src="camera.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script> -->
-    <script src="media.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script> -->
-    <script src="hands.js"></script>
-    <script src="queue.js"> </script>
-
-
-    <script type="module">
-
-        const cam_h = 960
-        const cam_w = 1280
-        const heightRatioWRTToFinger = 5
-
-        const videoElement = document.getElementsByClassName('input_video')[0];
-        const canvasElement = document.getElementsByClassName('output_canvas')[0];
-        const canvasCtx = canvasElement.getContext('2d');
-        var image;
-        var thirdLast, secondlast, last
-
-        image = document.createElement("img")
-        image.src = "./ring.png";
-
-
-        function getDistance(img, HL) {
-            try {
-                let x = (HL[0][13].x + HL[0][14].x) / 2
-                let y = (HL[0][13].y + HL[0][14].y) / 2
-                let z = (HL[0][13].z + HL[0][14].z) / 2
-                HL[0].push({ x: x, y: y, z: z })
-                return HL
-            }
-            catch (e) { return HL }
-        }
-
-        function distanceFormula(a, b) {
-
-            let pointX = (a.x - b.x) * (a.x - b.x)
-            let pointY = (a.y - b.y) * (a.y - b.y)
-
-            return Math.sqrt(pointX + pointY)
-
-        }
-
-        function calculateMidPoint(middleFing, ringFing, pinkyFing) {
-
-            var distance_a = (ringFing.x * cam_w + middleFing.x * cam_w) / 2
-            var distance_b = (ringFing.x * cam_w + pinkyFing.x * cam_w) / 2
-
-            var distance_ay = (ringFing.y * cam_h + middleFing.y * cam_h) / 2
-            var distance_by = (ringFing.y * cam_h + pinkyFing.y * cam_h) / 2
-
-            return { distance_a: distance_a, distance_b: distance_b, distance_ay: distance_ay, distance_by: distance_by }
-
-        }
-
-        function calWidth(middleFing, pinkyFing) {
-
-            return Math.sqrt(Math.pow((middleFing.x - pinkyFing.x), 2) + Math.pow((middleFing.y - pinkyFing.y), 2)) / 2
-        }
-        function calWidth(middleFing, pinkyFing) {
-
-            return Math.sqrt(Math.pow((middleFing.x - pinkyFing.x), 2) + Math.pow((middleFing.y - pinkyFing.y), 2)) / 2
-        }
-
-        function calHeight(point13, point14, angle_T) {
-
-            return Math.sqrt(Math.pow((point13.x - point14.x), 2) + Math.pow((point13.y - point14.y), 2)) / 5
-        }
-        function calHeight_W(width) {
-
-            return Math.sqrt(Math.pow((point13.x - point14.x), 2) + Math.pow((point13.y - point14.y), 2)) / 5
-        }
-
-        async function onResults(results) {
-            canvasCtx.save();
-            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-
-            if (results.multiHandLandmarks) {
-                let queue = new Queue();
-                results.multiHandLandmarks = getDistance(results.image, results.multiHandLandmarks)
-
-                try {
-
-                    thirdLast = secondlast;
-                    secondlast = last;
-                    last = results.multiHandLandmarks[0][21];
-                    queue.enqueue(last)
-                    queue.enqueue(secondlast)
-                    queue.enqueue(thirdLast)
-
-
-                    let Cavgx = (queue.items[0].x + queue.items[1].x + queue.items[2].x) / 3
-                    let Cavgy = (queue.items[0].y + queue.items[1].y + queue.items[2].y) / 3
-                    let Cavgz = (queue.items[0].z + queue.items[1].z + queue.items[2].z) / 3
-
-                    let newCenter = { x: Cavgx, y: Cavgy, z: Cavgz }
-
-
-                    var num = results.multiHandLandmarks[0][13].y - results.multiHandLandmarks[0][14].y
-                    var denom = results.multiHandLandmarks[0][13].x - results.multiHandLandmarks[0][14].x
-                    var angle = Math.abs(Math.atan2(num, denom) * (180 / Math.PI))
-                    var angle_T = (Math.atan2(num, denom) * (180 / Math.PI)) - 90
-                    angle = 1.6778982495774193//(angle * Math.PI) / 180.0
-                    angle_T = (angle_T * Math.PI) / 180.0
-
-
-
-                    /* center Point */
-                    var center = newCenter
-
-                    /* Finger Width */
-                    var width = calWidth(results.multiHandLandmarks[0][9], results.multiHandLandmarks[0][17])
-                    /*Finger Height */
-                    var height = calHeight(results.multiHandLandmarks[0][13], results.multiHandLandmarks[0][14])
-
-
-                    /* Finger Angle */
-                    var num = results.multiHandLandmarks[0][13].y - results.multiHandLandmarks[0][14].y
-                    var denom = results.multiHandLandmarks[0][13].x - results.multiHandLandmarks[0][14].x
-                    var angle = Math.abs(Math.atan2(num, denom) * (180 / Math.PI))
-                    var angle_T = (Math.atan2(num, denom) * (180 / Math.PI)) - 90
-                    angle = 1.6778982495774193//(angle * Math.PI) / 180.0
-                    angle_T = (angle_T * Math.PI) / 180.0
-
-
-                    var Top_Rightx = center.x + ((height / 2) * Math.cos(angle)) - ((width / 2) * Math.sin(angle))
-                    var Top_Righty = center.y + ((height / 2) * Math.sin(angle)) + ((width / 2) * Math.cos(angle))
-
-
-                    var Top_Leftx = center.x - ((height / 2) * Math.cos(angle)) - ((width / 2) * Math.sin(angle))
-                    var Top_Lefty = center.y - ((height / 2) * Math.sin(angle)) + ((width / 2) * Math.cos(angle))
-
-                    var Top_Leftx_new = - ((height / 2) * Math.cos(angle)) - ((width / 2) * Math.sin(angle))
-                    var Top_Lefty_new = - ((height / 2) * Math.sin(angle)) + ((width / 2) * Math.cos(angle))
-
-                    var Bot_Leftx = center.x - ((height / 2) * Math.cos(angle)) + ((width / 2) * Math.sin(angle))
-                    var Bot_Lefty = center.y - ((height / 2) * Math.sin(angle)) - ((width / 2) * Math.cos(angle))
-
-                    var Bot_Rightx = center.x + ((height / 2) * Math.cos(angle)) + ((width / 2) * Math.sin(angle))
-                    var Bot_Righty = center.y + ((height / 2) * Math.sin(angle)) - ((width / 2) * Math.cos(angle))
-
-                    let ring_position = newCenter
-                    results.multiHandLandmarks[0] = []
-                    results.multiHandLandmarks[0].push({ x: Top_Leftx, y: Top_Lefty, z: Top_Lefty })
-                    // results.multiHandLandmarks[0].push({ x: center.x, y: center.y, z: Top_Lefty })
-                    results.multiHandLandmarks[0].push({ x: Top_Rightx, y: Top_Righty, z: Top_Righty })
-                    // results.multiHandLandmarks[0].push({ x: center.x, y: center.y, z: Top_Lefty })
-                    results.multiHandLandmarks[0].push({ x: Top_Leftx, y: Top_Lefty, z: Top_Lefty })
-                    // results.multiHandLandmarks[0].push({ x: center.x, y: center.y, z: Top_Lefty })
-                    results.multiHandLandmarks[0].push({ x: Bot_Leftx, y: Bot_Lefty, z: Bot_Lefty })
-                    // results.multiHandLandmarks[0].push({ x: center.x, y: center.y, z: Top_Lefty })
-                    results.multiHandLandmarks[0].push({ x: Bot_Rightx, y: Bot_Righty, z: Bot_Righty })
-                    // results.multiHandLandmarks[0].push({ x: center.x, y: center.y, z: Top_Lefty })
-                    results.multiHandLandmarks[0].push({ x: Top_Rightx, y: Top_Righty, z: Top_Righty })
-
-
-
-                    canvasCtx.save();
-
-                    let image_x = results.multiHandLandmarks[0][1].x;
-
-                    let image_y = results.multiHandLandmarks[0][1].y
-
-                    canvasCtx.translate(center.x * canvasElement.width, center.y * canvasElement.height);
-
-                    //console.log(Top_Leftx_new, Top_Lefty_new)
-                    canvasCtx.rotate(angle_T)
-
-
-                    canvasCtx.drawImage(image, Top_Leftx_new * canvasElement.width, Top_Lefty_new * canvasElement.height, width * canvasElement.width, width * 0.4 * canvasElement.height);
-
-                    canvasCtx.restore();
-
-                    //console.log('angle', angle * (180 / Math.PI))
-
-
-
-                }
-                catch (e) { console.log(e) }
-
-                /*for (const landmarks of results.multiHandLandmarks) {
-                    drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#00FF00', lineWidth: 2 });
-                    drawLandmarks(canvasCtx, landmarks, { color: '#FF00FF', lineWidth: 1 });
-                }*/
-
-            }
-            canvasCtx.restore();
-        }
-
-        const hands = new Hands({
-            locateFile: (file) => {
-                return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-            }
-        });
-        hands.setOptions({
-            maxNumHands: 1,
-            modelComplexity: 1,
-            minDetectionConfidence: 0.5,
-            minTrackingConfidence: 0.5
-        });
-        hands.onResults(onResults);
-
-        const camera = new Camera(videoElement, {
-            onFrame: async () => {
-                await hands.send({ image: videoElement });
-            },
-            width: cam_w,
-            height: cam_h,
-            facingMode: "environment",
-            crossorigin: "anonymous",
-            playsinline: "true"
-        });
-        camera.start();
-
-
-
-    </script>
 
 </head>
 
 <body>
-    <div class="container">
-        <video style="display: none;" class="input_video" id="video"></video>
-        <canvas id="canvas" class="output_canvas" width="1280px" height="960px" />
+    <div class="logo">
+        <img class="img-style" src="lazurdelogo.png" alt="logo" />
+        <h1 class="title">Virtual Try On</h1>
+    </div>
+    <div class="btn-div">
+        <a href="home.html"><button class="try-btn">Try Now</button></a>
 
     </div>
 </body>
