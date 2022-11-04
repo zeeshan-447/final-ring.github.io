@@ -20,6 +20,9 @@
         const cam_w = 1280
         const heightRatioWRTToFinger = 5
 
+        var Top_Leftx_new = null
+        var Top_Lefty_new = null
+
         const videoElement = document.getElementsByClassName('input_video')[0];
         const canvasElement = document.getElementsByClassName('output_canvas')[0];
         const canvasCtx = canvasElement.getContext('2d');
@@ -58,22 +61,15 @@
 
 
         function translatePoints(temp){
-
             var point_distance = []
 
             temp.map(elem => {
                 var point = Math.sqrt(Math.pow((elem.x - 0), 2) + Math.pow((elem.y - 0), 2))
                 point_distance.push(point)
             })
-
-            
+    
             var index = point_distance.indexOf(Math.min(...point_distance))
-
-            console.log(temp[index],point_distance)
-
             return (temp[index])
-
-
         }
 
         async function onResults(results) {
@@ -131,14 +127,11 @@
 
                     //console.log(angle)
 
-
                     var Top_Rightx = center.x + ((height / 2) * Math.cos(angle)) - ((width / 2) * Math.sin(angle))
                     var Top_Righty = center.y + ((height / 2) * Math.sin(angle)) + ((width / 2) * Math.cos(angle))
 
                     var Top_Leftx = center.x - ((height / 2) * Math.cos(angle)) - ((width / 2) * Math.sin(angle))
                     var Top_Lefty = center.y - ((height / 2) * Math.sin(angle)) + ((width / 2) * Math.cos(angle))
-
-                    
 
                     var Bot_Leftx = center.x - ((height / 2) * Math.cos(angle)) + ((width / 2) * Math.sin(angle))
                     var Bot_Lefty = center.y - ((height / 2) * Math.sin(angle)) - ((width / 2) * Math.cos(angle))
@@ -147,37 +140,37 @@
                     var Bot_Righty = center.y + ((height / 2) * Math.sin(angle)) - ((width / 2) * Math.cos(angle))
 
 
-                    var Top_Leftx_new = - ((height / 2) * Math.cos(angle)) - ((width / 2) * Math.sin(angle))
-                    var Top_Lefty_new = - ((height / 2) * Math.sin(angle)) + ((width / 2) * Math.cos(angle))
 
-
-
-                    let ring_position = newCenter
-                    results.multiHandLandmarks[0] = []
-
-                    var temp = []
-
-                    temp.push({ x: Top_Leftx, y: Top_Lefty, z: Top_Lefty })
-                    temp.push({ x: Top_Rightx, y: Top_Righty, z: Top_Righty })
-                    temp.push({ x: Bot_Leftx, y: Bot_Lefty, z: Bot_Lefty })
-                    temp.push({ x: Bot_Rightx, y: Bot_Righty, z: Bot_Righty })
-
-                    var min_point = translatePoints(temp)
+                    if(angle > 0.9 && angle < 1.9){
+                        Top_Leftx_new = - ((height / 2) * Math.cos(angle)) - ((width / 2) * Math.sin(angle)) 
+                        Top_Lefty_new = - ((height / 2) * Math.sin(angle)) + ((width / 2) * Math.cos(angle)) 
+    
+                        console.log(Top_Leftx_new,Top_Lefty_new,angle)
+                    }                    
 
                     
 
-                    var min_pointx_new = - min_point.x 
-                    var min_pointy_new = - min_point.y
 
-                    results.multiHandLandmarks[0].push({ x: Top_Leftx, y: Top_Lefty, z: Top_Lefty })
+                    //var temp = []
+                    //temp.push({ x: Top_Leftx, y: Top_Lefty, z: Top_Lefty })
+                    //temp.push({ x: Top_Rightx, y: Top_Righty, z: Top_Righty })
+                    //temp.push({ x: Bot_Leftx, y: Bot_Lefty, z: Bot_Lefty })
+                    //temp.push({ x: Bot_Rightx, y: Bot_Righty, z: Bot_Righty })
+                    //var min_point = translatePoints(temp)
+                    //var min_pointx_new = - min_point.x 
+                    //var min_pointy_new = - min_point.y
+
+
+                    results.multiHandLandmarks[0] = []
+                    results.multiHandLandmarks[0].push({ x: Top_Leftx,  y: Top_Lefty , z: Top_Lefty })
                     results.multiHandLandmarks[0].push({ x: Top_Rightx, y: Top_Righty, z: Top_Righty })
-                    results.multiHandLandmarks[0].push({ x: Bot_Leftx, y: Bot_Lefty, z: Bot_Lefty })
                     results.multiHandLandmarks[0].push({ x: Bot_Rightx, y: Bot_Righty, z: Bot_Righty })
+                    results.multiHandLandmarks[0].push({ x: Bot_Leftx , y: Bot_Lefty , z: Bot_Lefty })
+                    
 
 
                     //console.log(min_point)
-                    console.log(results.multiHandLandmarks[0])
-
+                    //console.log(results.multiHandLandmarks[0])
                     // results.multiHandLandmarks[0].push({ x: center.x, y: center.y, z: Top_Lefty })
                     // results.multiHandLandmarks[0].push({ x: center.x, y: center.y, z: Top_Lefty })
                     // results.multiHandLandmarks[0].push({ x: Top_Leftx, y: Top_Lefty, z: Top_Lefty })
@@ -186,12 +179,9 @@
                     // results.multiHandLandmarks[0].push({ x: center.x, y: center.y, z: Top_Lefty })
                     //results.multiHandLandmarks[0].push({ x: Top_Rightx, y: Top_Righty, z: Top_Righty })
 
-
-
                     canvasCtx.save();
 
                     let image_x = results.multiHandLandmarks[0][1].x;
-
                     let image_y = results.multiHandLandmarks[0][1].y
 
                     canvasCtx.translate(center.x * canvasElement.width, center.y * canvasElement.height);
@@ -199,8 +189,8 @@
                     canvasCtx.rotate(angle_T)
 
                     canvasCtx.drawImage(image, 
-                        min_pointx_new, 
-                        min_pointy_new,
+                        Top_Leftx_new * canvasElement.width, 
+                        Top_Lefty_new * canvasElement.height,
                         width * canvasElement.width, 
                         height * canvasElement.height
                     );
@@ -210,11 +200,10 @@
                 }
                 catch (e) { console.log(e) }
 
-                /*for (const landmarks of results.multiHandLandmarks) {
-                    console.log(landmarks)
+                for (const landmarks of results.multiHandLandmarks) {
                     drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#00FF00', lineWidth: 2 });
                     drawLandmarks(canvasCtx, landmarks, { color: '#FF00FF', lineWidth: 1 });
-                }*/
+                }
 
             }
             canvasCtx.restore();
