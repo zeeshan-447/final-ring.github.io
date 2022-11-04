@@ -44,8 +44,8 @@
         const videoElement = document.getElementsByClassName('input_video')[0];
         const canvasElement = document.getElementsByClassName('output_canvas')[0];
         const canvasCtx = canvasElement.getContext('2d');
-        var thirdLast, secondlast, last
-        var thirdLastAngle, secondLastAngle, lastAngle
+        var fifthLast, fourthLast, thirdLast, secondlast, last
+        var fifthLastAngle, fourthLastAngle, thirdLastAngle, secondLastAngle, lastAngle
         image = document.createElement("img")
 
         // image.src = "./ring.png";
@@ -113,21 +113,24 @@
 
                 try {
 
+                    fifthLast = fourthLast
+                    fourthLast = thirdLast
                     thirdLast = secondlast;
                     secondlast = last;
                     last = results.multiHandLandmarks[0][21];
                     queue.enqueue(last)
                     queue.enqueue(secondlast)
                     queue.enqueue(thirdLast)
+                    queue.enqueue(fourthLast)
+                    queue.enqueue(fifthLast)
 
 
 
 
 
-
-                    let Cavgx = (queue.items[0].x + queue.items[1].x + queue.items[2].x) / 3
-                    let Cavgy = (queue.items[0].y + queue.items[1].y + queue.items[2].y) / 3
-                    let Cavgz = (queue.items[0].z + queue.items[1].z + queue.items[2].z) / 3
+                    let Cavgx = (queue.items[0].x + queue.items[1].x + queue.items[2].x + queue.items[3].x + queue.items[4].x) / 5
+                    let Cavgy = (queue.items[0].y + queue.items[1].y + queue.items[2].y + queue.items[3].y + queue.items[4].y) / 5
+                    let Cavgz = (queue.items[0].z + queue.items[1].z + queue.items[2].z + queue.items[3].z + queue.items[4].z) / 5
 
                     let newCenter = { x: Cavgx, y: Cavgy, z: Cavgz }
 
@@ -138,6 +141,8 @@
                     // var angle_T = (Math.atan2(num, denom) * (180 / Math.PI)) - 90
                     angle = 1.6778982495774193//(angle * Math.PI) / 180.0
 
+                    fifthLastAngle = fourthLastAngle
+                    fourthLastAngle = thirdLast
 
                     thirdLastAngle = secondLastAngle
 
@@ -151,7 +156,14 @@
 
                     angleQueue.enqueue(thirdLastAngle)
 
-                    var angle_T = (angleQueue.items[0] + angleQueue.items[1] + angleQueue.items[2]) / 3
+                    angleQueue.enqueue(fourthLastAngle)
+
+                    angleQueue.enqueue(fifthLastAngle)
+
+
+
+
+                    var angle_T = (angleQueue.items[0] + angleQueue.items[1] + angleQueue.items[2] + angleQueue.items[3] + angleQueue.items[4]) / 5
 
 
                     angle_T = (angle_T * Math.PI) / 180.0
