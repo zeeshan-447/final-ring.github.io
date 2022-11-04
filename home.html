@@ -160,8 +160,11 @@
                     var Top_Leftx = center.x - ((height / 2) * Math.cos(angle)) - ((width / 2) * Math.sin(angle))
                     var Top_Lefty = center.y - ((height / 2) * Math.sin(angle)) + ((width / 2) * Math.cos(angle))
 
-                    var Top_Leftx_new = - ((height / 2) * Math.cos(angle)) - ((width / 2) * Math.sin(angle))
-                    var Top_Lefty_new = - ((height / 2) * Math.sin(angle)) + ((width / 2) * Math.cos(angle))
+                    if (angle > 0 && angle < 1.9) {
+                        var Top_Leftx_new = - ((height / 2) * Math.cos(angle)) - ((width / 2) * Math.sin(angle))
+                        var Top_Lefty_new = - ((height / 2) * Math.sin(angle)) + ((width / 2) * Math.cos(angle))
+
+                    }
 
                     var Bot_Leftx = center.x - ((height / 2) * Math.cos(angle)) + ((width / 2) * Math.sin(angle))
                     var Bot_Lefty = center.y - ((height / 2) * Math.sin(angle)) - ((width / 2) * Math.cos(angle))
@@ -196,8 +199,7 @@
                     //console.log(Top_Leftx_new, Top_Lefty_new)
                     canvasCtx.rotate(angle_T)
 
-                    console.log('width', width)
-                    console.log('canvaswidth', canvasElement.width)
+
 
                     canvasCtx.drawImage(image, Top_Leftx_new * canvasElement.width, Top_Lefty_new * canvasElement.height, width * canvasElement.width, width * 0.4 * canvasElement.height);
 
