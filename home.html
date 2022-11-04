@@ -45,6 +45,7 @@
         const canvasElement = document.getElementsByClassName('output_canvas')[0];
         const canvasCtx = canvasElement.getContext('2d');
         var thirdLast, secondlast, last
+        var thirdLastAngle, secondLastAngle, lastAngle
         image = document.createElement("img")
 
         // image.src = "./ring.png";
@@ -107,6 +108,7 @@
 
             if (results.multiHandLandmarks) {
                 let queue = new Queue();
+                let angleQueue = new Queue();
                 results.multiHandLandmarks = getDistance(results.image, results.multiHandLandmarks)
 
                 try {
@@ -119,6 +121,10 @@
                     queue.enqueue(thirdLast)
 
 
+
+
+
+
                     let Cavgx = (queue.items[0].x + queue.items[1].x + queue.items[2].x) / 3
                     let Cavgy = (queue.items[0].y + queue.items[1].y + queue.items[2].y) / 3
                     let Cavgz = (queue.items[0].z + queue.items[1].z + queue.items[2].z) / 3
@@ -129,9 +135,28 @@
                     var num = results.multiHandLandmarks[0][13].y - results.multiHandLandmarks[0][14].y
                     var denom = results.multiHandLandmarks[0][13].x - results.multiHandLandmarks[0][14].x
                     var angle = Math.abs(Math.atan2(num, denom) * (180 / Math.PI))
-                    var angle_T = (Math.atan2(num, denom) * (180 / Math.PI)) - 90
+                    // var angle_T = (Math.atan2(num, denom) * (180 / Math.PI)) - 90
                     angle = 1.6778982495774193//(angle * Math.PI) / 180.0
+
+
+                    thirdLastAngle = secondLastAngle
+
+                    secondLastAngle = lastAngle
+
+                    lastAngle = (Math.atan2(num, denom) * (180 / Math.PI)) - 90
+
+                    angleQueue.enqueue(lastAngle)
+
+                    angleQueue.enqueue(secondLastAngle)
+
+                    angleQueue.enqueue(thirdLastAngle)
+
+                    var angle_T = (angleQueue.items[0] + angleQueue.items[1] + angleQueue.items[2]) / 3
+
+
                     angle_T = (angle_T * Math.PI) / 180.0
+
+                    console.log('angleT', angle_T)
 
 
 
