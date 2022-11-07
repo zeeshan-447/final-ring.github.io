@@ -24,13 +24,14 @@
 
         function changeImage(id) {
             if (id === "1") {
-                image.src = "./ring.png"
+                image.src = "./diamond.png"
             }
             else if (id === "2") {
 
-                image.src = "./ring1.png"
+                image.src = "./stone.png"
 
             }
+
         }
 
     </script>
@@ -288,16 +289,6 @@
 
     </script>
     <style>
-        .img-grid {
-            display: grid;
-            grid-template-columns: auto auto;
-            justify-content: space-around;
-            align-items: center;
-            height: 30vh;
-        }
-
-
-
         .img-style {
             width: 100%;
             height: 100%;
@@ -320,6 +311,14 @@
 
         }
 
+        .ring-video {
+            display: flex;
+            flex-direction: row;
+
+        }
+
+
+
 
         @media only screen and (min-width: 992px) {
             .logo-img-style {
@@ -330,11 +329,12 @@
             .img-style {
                 width: 60%;
                 height: auto;
+                cursor: pointer;
             }
 
             .container {
                 display: flex;
-                justify-content: center;
+                flex-direction: row !important;
             }
 
             /* .output_canvas {
@@ -353,6 +353,14 @@
 
 
             }
+
+            .img-column {
+                display: flex;
+                flex-direction: column !important;
+                margin-left: 1%;
+                margin-right: 1%;
+                justify-content: flex-start !important;
+            }
         }
 
         @media only screen and (min-width: 600px) {
@@ -362,18 +370,33 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                width: 300px;
-                height: 150px;
+                width: 150px;
+                height: 80px;
                 border: 1px solid #691A38;
                 border-radius: 12px;
-
-
+                margin-top: 5%;
+                margin-left: 2%;
             }
 
             .img-style {
                 width: 40%;
                 height: auto;
             }
+
+            .container {
+                display: flex;
+                flex-direction: column-reverse;
+            }
+
+            .img-column {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+
+                margin-left: 1%;
+                margin-right: 1%;
+            }
+
         }
     </style>
 </head>
@@ -384,19 +407,41 @@
 
     </div>
     <div class="container">
+        <div class="img-column">
+            <div class="grid-style">
+
+                <img class="img-style" src="diamondtilted.png" alt="ring" id="1" onclick="changeImage(id)" />
+            </div>
+            <div class="grid-style">
+
+                <img class="img-style" src="stonetilted.png" id="2" alt="ring" onclick="changeImage(id)" />
+            </div>
+            <div class="grid-style">
+
+                <img class="img-style" src="crown.png" id="3" alt="ring" onclick="changeImage(id)" />
+            </div>
+            <div class="grid-style">
+
+                <img class="img-style" src="leaf.png" id="4" alt="ring" onclick="changeImage(id)" />
+            </div>
+            <div class="grid-style">
+
+                <img class="img-style" src="flower.png" id="5" alt="ring" onclick="changeImage(id)" />
+            </div>
+        </div>
         <video style="display: none;" class="input_video" id="video"></video>
         <canvas id="canvas" class="output_canvas" width="1190px" height="960px" />
 
     </div>
-    <div class="img-grid">
+    <!-- <div class="img-grid">
         <div class="grid-style">
 
             <img class="img-style" src="model2.png" alt="ring" id="1" onclick="changeImage(id)" />
         </div>
         <div class="grid-style">
 
-            <img class="img-style" src="ring1.png" id="2" alt="ring" onclick="changeImage(id)" />
-        </div>
+            <img class="img-style" src="goldenring.png" id="2" alt="ring" onclick="changeImage(id)" />
+        </div> -->
     </div>
 </body>
 
