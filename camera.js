@@ -538,6 +538,7 @@
     a.video.setAttribute("crossorigin", "anonymous");
     a.video.setAttribute("playsinline", "true");
     a.video.setAttribute("muted", "true");
+
     a.video.onloadedmetadata = function () {
       a.video.play();
       P(a);

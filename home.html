@@ -31,12 +31,29 @@
                 image.src = "./stone.png"
 
             }
+            else if (id === "3") {
+
+                image.src = "./blue.png"
+
+            }
+            else if (id === "4") {
+
+                image.src = "./crystal.png"
+
+            }
+
 
         }
 
     </script>
 
     <script type="module">
+
+        const spinner = document.querySelector('.loading');
+        spinner.ontransitionend = () => {
+            spinner.style.display = 'none';
+        };
+
 
         const cam_h = 960
         const cam_w = 1000
@@ -103,6 +120,8 @@
         }
 
         async function onResults(results) {
+            document.body.classList.add('loaded');
+
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
             canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
@@ -129,9 +148,9 @@
 
 
 
-                    let Cavgx = (queue.items[0].x + queue.items[1].x + queue.items[2].x + queue.items[3].x + queue.items[4].x) / 5
-                    let Cavgy = (queue.items[0].y + queue.items[1].y + queue.items[2].y + queue.items[3].y + queue.items[4].y) / 5
-                    let Cavgz = (queue.items[0].z + queue.items[1].z + queue.items[2].z + queue.items[3].z + queue.items[4].z) / 5
+                    let Cavgx = (queue.items[0].x + queue.items[1].x) / 2
+                    let Cavgy = (queue.items[0].y + queue.items[1].y) / 2
+                    let Cavgz = (queue.items[0].z + queue.items[1].z) / 2
 
                     let newCenter = { x: Cavgx, y: Cavgy, z: Cavgz }
 
@@ -164,7 +183,7 @@
 
 
 
-                    var angle_T = (angleQueue.items[0] + angleQueue.items[1] + angleQueue.items[2] + angleQueue.items[3] + angleQueue.items[4]) / 5
+                    var angle_T = (angleQueue.items[0] + angleQueue.items[1]) / 2
 
 
                     angle_T = (angle_T * Math.PI) / 180.0
@@ -239,7 +258,7 @@
 
 
 
-                    canvasCtx.drawImage(image, Top_Leftx_new * canvasElement.width, Top_Lefty_new * canvasElement.height, width * canvasElement.width, width * 0.4 * canvasElement.height);
+                    canvasCtx.drawImage(image, Top_Leftx_new * canvasElement.width, Top_Lefty_new * canvasElement.height, width * canvasElement.width, width * image.height / image.width * canvasElement.height);
 
                     canvasCtx.restore();
 
@@ -268,7 +287,9 @@
             maxNumHands: 1,
             modelComplexity: 1,
             minDetectionConfidence: 0.5,
-            minTrackingConfidence: 0.5
+            minTrackingConfidence: 0.5,
+            selfieMode: true,
+
         });
         hands.onResults(onResults);
 
@@ -280,7 +301,7 @@
             height: cam_h,
             facingMode: "environment",
             crossorigin: "anonymous",
-            playsinline: "true"
+            playsinline: "true",
         });
         camera.start();
 
@@ -317,12 +338,54 @@
 
         }
 
+        .loading {
+            display: flex;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            align-items: center;
+            backface-visibility: hidden;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 1s;
+        }
+
+        .message {
+            font-size: x-large;
+        }
+
+        .spinner {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            animation: spin 1s linear infinite;
+            border: 32px solid #bebebe;
+            border-top: 32px solid #3498db;
+            border-radius: 50%;
+        }
+
+
+        .loaded .loading {
+            opacity: 0;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
 
 
 
         @media only screen and (min-width: 992px) {
             .logo-img-style {
-                width: 60%;
+                width: 20%;
                 height: auto;
             }
 
@@ -425,11 +488,11 @@
             </div>
             <div class="grid-style">
 
-                <img class="img-style" src="crown.png" id="3" alt="ring" onclick="changeImage(id)" />
+                <img class="img-style" src="bluetilted.png" id="3" alt="ring" onclick="changeImage(id)" />
             </div>
             <div class="grid-style">
 
-                <img class="img-style" src="leaf.png" id="4" alt="ring" onclick="changeImage(id)" />
+                <img class="img-style" src="crystaltilted.png" id="4" alt="ring" onclick="changeImage(id)" />
             </div>
             <div class="grid-style last-image">
 
@@ -437,8 +500,17 @@
             </div>
         </div>
         <video style="display: none;" class="input_video" id="video"></video>
-        <canvas id="canvas" class="output_canvas" width="1190px" height="960px" />
+        <canvas id="canvas" class="output_canvas" width="1190px" height="960px">
+        </canvas>
 
+
+    </div>
+
+    <div class="loading">
+        <div class="spinner"></div>
+        <div class="message">
+            Loading
+        </div>
     </div>
     <!-- <div class="img-grid">
         <div class="grid-style">
