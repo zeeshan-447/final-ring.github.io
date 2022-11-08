@@ -283,15 +283,32 @@
                 return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
             }
         });
+
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+
+        let x;
+
+
+        if (w < 992) {
+            x = false;
+
+        }
+        else {
+            x = true
+        }
+
         hands.setOptions({
             maxNumHands: 1,
             modelComplexity: 1,
             minDetectionConfidence: 0.5,
             minTrackingConfidence: 0.5,
-            selfieMode: true,
+            selfieMode: x,
 
         });
         hands.onResults(onResults);
+
+
 
         const camera = new Camera(videoElement, {
             onFrame: async () => {
